@@ -23,8 +23,5 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# PocketBase test data
-pb_test_data/
-
-# PocketBase binary
-pocketbase
+# PocketBase
+pocketbase/

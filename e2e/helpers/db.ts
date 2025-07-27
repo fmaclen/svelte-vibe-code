@@ -83,7 +83,7 @@ export async function seedAdmin() {
 		const { spawn } = await import('child_process');
 		
 		return new Promise<void>((resolve, reject) => {
-			const childProcess = spawn('./pocketbase', ['superuser', 'create', ADMIN_EMAIL, ADMIN_PASSWORD], {
+			const childProcess = spawn('./pocketbase/pocketbase', ['superuser', 'create', ADMIN_EMAIL, ADMIN_PASSWORD], {
 				cwd: process.cwd(),
 				stdio: 'pipe'
 			});

@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
 	webServer: [
 		{
-			command: './pocketbase serve --dir=./pb_test_data',
+			command: 'npm run pb',
 			port: 8090,
 			reuseExistingServer: !process.env.CI,
 			timeout: 120000,

@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"pb": "./pocketbase/pocketbase serve",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -16,7 +17,7 @@
 		"test:e2e:ui": "playwright test --ui",
 		"test:e2e:debug": "playwright test --debug",
 		"test": "npm run test:e2e",
-		"pb:download": "curl -s https://api.github.com/repos/pocketbase/pocketbase/releases/latest | grep 'browser_download_url.*darwin_arm64' | cut -d '\"' -f 4 | xargs curl -L -o pocketbase.zip && unzip pocketbase.zip && rm pocketbase.zip",
+		"pb:download": "mkdir -p pocketbase && curl -s https://api.github.com/repos/pocketbase/pocketbase/releases/latest | grep 'browser_download_url.*darwin_arm64' | cut -d '\"' -f 4 | xargs curl -L -o pocketbase.zip && unzip pocketbase.zip && mv pocketbase pocketbase/pocketbase && rm pocketbase.zip CHANGELOG.md LICENSE.md && chmod +x pocketbase/pocketbase && echo \"Downloaded latest PocketBase\"",
 		"postinstall": "npm run pb:download || echo 'PocketBase download failed, please install manually'"
 	},
 	"devDependencies": {
