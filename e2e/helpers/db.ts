@@ -79,8 +79,8 @@ export async function createTestUser(data: {
 
 export async function seedAdmin() {
 	try {
-		// Try to create the initial superuser
-		const response = await fetch('http://127.0.0.1:8090/api/admin/superusers', {
+		// Try to create the initial superuser using the install endpoint
+		const response = await fetch('http://127.0.0.1:8090/api/install', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
