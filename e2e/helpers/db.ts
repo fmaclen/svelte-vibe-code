@@ -79,27 +79,43 @@ export async function createTestUser(data: {
 
 export async function seedAdmin() {
 	try {
-		// Try to create the initial superuser using the install endpoint
-		const response = await fetch('http://127.0.0.1:8090/api/install', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				email: ADMIN_EMAIL,
-				password: ADMIN_PASSWORD,
-				passwordConfirm: ADMIN_PASSWORD
-			})
-		});
+		// Use the PocketBase CLI to create superuser
+		const { spawn } = await import('child_process');
+		
+		return new Promise<void>((resolve, reject) => {
+			const childProcess = spawn('./pocketbase', ['superuser', 'create', ADMIN_EMAIL, ADMIN_PASSWORD], {
+				cwd: process.cwd(),
+				stdio: 'pipe'
+			});
 
-		if (response.ok) {
-			console.log('Admin user created successfully');
-		} else if (response.status === 400) {
-			// Admin might already exist, that's fine
-			console.log('Admin user already exists');
-		} else {
-			throw new Error(`Failed to create admin: ${response.status}`);
-		}
+			let output = '';
+			let errorOutput = '';
+
+			childProcess.stdout.on('data', (data) => {
+				output += data.toString();
+			});
+
+			childProcess.stderr.on('data', (data) => {
+				errorOutput += data.toString();
+			});
+
+			childProcess.on('close', (code) => {
+				if (code === 0) {
+					console.log('Admin user created successfully');
+					resolve();
+				} else if (errorOutput.includes('already exists') || errorOutput.includes('duplicate')) {
+					console.log('Admin user already exists');
+					resolve();
+				} else {
+					console.error('Failed to create admin:', errorOutput);
+					reject(new Error(`Failed to create admin: ${errorOutput}`));
+				}
+			});
+
+			childProcess.on('error', (error) => {
+				reject(error);
+			});
+		});
 	} catch (error) {
 		console.error('Failed to seed admin:', error);
 		throw error;
