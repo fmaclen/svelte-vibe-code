@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
 	webServer: [
 		{
-			command: 'npx pocketbase serve --dir=./pb_test_data',
+			command: './pocketbase serve --dir=./pb_test_data',
 			port: 8090,
 			reuseExistingServer: !process.env.CI,
 			timeout: 120000,
