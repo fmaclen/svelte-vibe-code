@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { resetDatabase, createTestUser } from './helpers/db';
+import { resetDatabase, createTestUser, seedAdmin } from './helpers/db';
 
 test.describe('User Authentication Flow', () => {
 	test('user can sign up with valid credentials', async ({ page }) => {

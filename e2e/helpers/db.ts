@@ -3,11 +3,14 @@ import PocketBase from 'pocketbase';
 const pb = new PocketBase('http://127.0.0.1:8090');
 
 // Test admin credentials
-const ADMIN_EMAIL = 'admin@test.local';
-const ADMIN_PASSWORD = 'adminpassword123';
+const ADMIN_EMAIL = 'admin@example.com';
+const ADMIN_PASSWORD = 'qweasdzxc';
 
 export async function resetDatabase() {
 	try {
+		// Ensure admin exists first
+		await seedAdmin();
+		
 		// Authenticate as superuser
 		await pb.collection('_superusers').authWithPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
 
@@ -43,6 +46,9 @@ export async function createTestUser(data: {
 	bio?: string;
 }) {
 	try {
+		// Ensure admin exists first
+		await seedAdmin();
+		
 		// Authenticate as superuser to create users
 		await pb.collection('_superusers').authWithPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
 
@@ -68,5 +74,34 @@ export async function createTestUser(data: {
 		throw error;
 	} finally {
 		pb.authStore.clear();
+	}
+}
+
+export async function seedAdmin() {
+	try {
+		// Try to create the initial superuser
+		const response = await fetch('http://127.0.0.1:8090/api/admin/superusers', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				email: ADMIN_EMAIL,
+				password: ADMIN_PASSWORD,
+				passwordConfirm: ADMIN_PASSWORD
+			})
+		});
+
+		if (response.ok) {
+			console.log('Admin user created successfully');
+		} else if (response.status === 400) {
+			// Admin might already exist, that's fine
+			console.log('Admin user already exists');
+		} else {
+			throw new Error(`Failed to create admin: ${response.status}`);
+		}
+	} catch (error) {
+		console.error('Failed to seed admin:', error);
+		throw error;
 	}
 }
