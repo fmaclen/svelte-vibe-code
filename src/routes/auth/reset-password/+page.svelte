@@ -26,8 +26,8 @@
 		</Card.Header>
 		<Card.Content>
 			{#if showSuccess}
-				<div class="text-center space-y-4">
-					<p class="text-green-600 font-medium">Password reset email sent</p>
+				<div class="space-y-4 text-center">
+					<p class="font-medium text-green-600">Password reset email sent</p>
 					<p class="text-muted-foreground">Check your inbox for instructions</p>
 					<Button href="/auth/signin" variant="outline" class="w-full">Back to sign in</Button>
 				</div>
@@ -42,9 +42,7 @@
 				</form>
 
 				<div class="mt-4 text-center text-sm">
-					<a href="/auth/signin" class="text-muted-foreground hover:underline">
-						Back to sign in
-					</a>
+					<a href="/auth/signin" class="text-muted-foreground hover:underline"> Back to sign in </a>
 				</div>
 			{/if}
 		</Card.Content>

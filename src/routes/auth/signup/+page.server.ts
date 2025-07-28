@@ -24,7 +24,7 @@ export const actions: Actions = {
 
 		// TODO: Replace with actual database implementation
 		console.log('Creating user:', { email });
-		
+
 		// Simulate successful signup by setting a session cookie
 		cookies.set('session', 'mock-session-token', {
 			path: '/',

@@ -24,7 +24,7 @@ export const actions: Actions = {
 
 		// TODO: Replace with actual authentication
 		console.log('Signing in user:', { email });
-		
+
 		// Simulate successful signin by setting a session cookie
 		cookies.set('session', 'mock-session-token', {
 			path: '/',

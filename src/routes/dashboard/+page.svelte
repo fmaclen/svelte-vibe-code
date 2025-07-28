@@ -19,12 +19,14 @@
 			<Card.Description>Welcome back! You have successfully signed in!</Card.Description>
 		</Card.Header>
 		<Card.Content class="space-y-4">
-			<p class="text-muted-foreground text-center">This is your protected dashboard area.</p>
-			
+			<p class="text-center text-muted-foreground">This is your protected dashboard area.</p>
+
 			<div class="flex gap-2">
 				<Button href="/profile" variant="outline" class="flex-1">Profile</Button>
 				<DropdownMenu.Root>
-					<DropdownMenu.Trigger class="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
+					<DropdownMenu.Trigger
+						class="text-destructive-foreground inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-destructive px-4 py-2 text-sm font-medium whitespace-nowrap transition-all outline-none hover:bg-destructive/90 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
+					>
 						Account menu
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
