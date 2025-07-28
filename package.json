@@ -28,6 +28,8 @@
 		"@types/node": "^24.1.0",
 		"bits-ui": "^2.8.13",
 		"clsx": "^2.1.1",
+		"convex": "^1.25.4",
+		"convex-svelte": "^0.0.11",
 		"embla-carousel-svelte": "^8.6.0",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",

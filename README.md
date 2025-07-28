@@ -1,38 +1,70 @@
-# sv
+# Svelte Vibe Code
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A modern Svelte project with Convex backend integration.
 
-## Creating a project
+## Setup
 
-If you're seeing this, you've probably already done this step. Congrats!
+Install dependencies:
 
 ```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+npm install
 ```
 
-## Developing
+## Convex Database Setup
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+This project uses Convex as the backend database. To get started:
+
+1. **Login to Convex:**
+
+   ```sh
+   npx convex login
+   ```
+
+2. **Initialize development:**
+
+   ```sh
+   npx convex dev
+   ```
+
+   This creates a deployment and starts the dev server.
+
+3. **Set environment variables:**
+   Copy `.env.example` to `.env.local` and update `PUBLIC_CONVEX_URL` with your deployment URL.
+
+## Development
+
+Start the development server:
 
 ```sh
 npm run dev
 
-# or start the server and open the app in a new browser tab
+# or open in browser
 npm run dev -- --open
 ```
 
+## Convex Commands
+
+- `npx convex dev` - Start Convex development server
+- `npx convex deploy` - Deploy functions to production
+- `npx convex dashboard` - Open the Convex dashboard
+
 ## Building
 
-To create a production version of your app:
+Create a production build:
 
 ```sh
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+Preview the production build:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```sh
+npm run preview
+```
+
+## Database Schema
+
+- **users**: User authentication and profiles
+- **messages**: Real-time messaging system
+
+See `CONVEX_SETUP.md` for detailed setup instructions.
