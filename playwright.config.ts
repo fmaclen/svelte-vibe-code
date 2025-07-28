@@ -6,16 +6,16 @@ export default defineConfig({
 			command: 'npm run pb',
 			port: 8090,
 			reuseExistingServer: !process.env.CI,
-			timeout: 120000,
+			timeout: 120000
 		},
 		{
 			command: 'npm run build && npm run preview',
 			port: 4173,
-			reuseExistingServer: !process.env.CI,
+			reuseExistingServer: !process.env.CI
 		}
 	],
 	testDir: 'e2e',
 	use: {
-		baseURL: 'http://localhost:4173',
-	},
+		baseURL: 'http://localhost:4173'
+	}
 });

@@ -10,7 +10,7 @@ export async function resetDatabase() {
 	try {
 		// Ensure admin exists first
 		await seedAdmin();
-		
+
 		// Authenticate as superuser
 		await pb.collection('_superusers').authWithPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
 
@@ -48,7 +48,7 @@ export async function createTestUser(data: {
 	try {
 		// Ensure admin exists first
 		await seedAdmin();
-		
+
 		// Authenticate as superuser to create users
 		await pb.collection('_superusers').authWithPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
 
@@ -81,12 +81,16 @@ export async function seedAdmin() {
 	try {
 		// Use the PocketBase CLI to create superuser
 		const { spawn } = await import('child_process');
-		
+
 		return new Promise<void>((resolve, reject) => {
-			const childProcess = spawn('./pocketbase/pocketbase', ['superuser', 'create', ADMIN_EMAIL, ADMIN_PASSWORD], {
-				cwd: process.cwd(),
-				stdio: 'pipe'
-			});
+			const childProcess = spawn(
+				'./pocketbase/pocketbase',
+				['superuser', 'create', ADMIN_EMAIL, ADMIN_PASSWORD],
+				{
+					cwd: process.cwd(),
+					stdio: 'pipe'
+				}
+			);
 
 			let output = '';
 			let errorOutput = '';

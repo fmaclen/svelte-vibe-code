@@ -7,9 +7,9 @@ test.describe('User Authentication Flow', () => {
 
 		await page.goto('/');
 		await page.getByRole('link', { name: 'Sign Up' }).click();
-		await page.getByLabel('Email').fill('alice@example.com');
-		await page.getByLabel('Password').fill('qweasdzxc');
-		await page.getByLabel('Confirm Password').fill('qweasdzxc');
+		await page.getByLabel('Email', { exact: true }).fill('alice@example.com');
+		await page.getByLabel('Password', { exact: true }).fill('qweasdzxc');
+		await page.getByLabel('Confirm Password', { exact: true }).fill('qweasdzxc');
 		await page.getByRole('button', { name: 'Sign Up' }).click();
 
 		await expect(page.getByText('Welcome to your dashboard')).toBeVisible();
