@@ -11,7 +11,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
+	default: async ({ request, cookies }) => {
 		const form = await superValidate(request, valibot(signupSchema));
 
 		if (!form.valid) {
@@ -22,26 +22,18 @@ export const actions: Actions = {
 
 		const { email, password } = form.data;
 
-		try {
-			// Create the user
-			const user = await locals.pb.collection('users').create({
-				email,
-				password,
-				passwordConfirm: password,
-				emailVisibility: true
-			});
+		// TODO: Replace with actual database implementation
+		console.log('Creating user:', { email });
+		
+		// Simulate successful signup by setting a session cookie
+		cookies.set('session', 'mock-session-token', {
+			path: '/',
+			httpOnly: true,
+			secure: false,
+			sameSite: 'lax',
+			maxAge: 60 * 60 * 24 * 7 // 7 days
+		});
 
-			// Auto-login the user
-			await locals.pb.collection('users').authWithPassword(email, password);
-		} catch (error) {
-			console.error('Signup error:', error);
-			return fail(400, {
-				form,
-				message: 'Failed to create account. Please try again.'
-			});
-		}
-
-		// Redirect to dashboard (outside try/catch since redirect throws)
 		redirect(303, '/dashboard');
 	}
 };

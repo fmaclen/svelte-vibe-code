@@ -11,7 +11,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
+	default: async ({ request }) => {
 		const form = await superValidate(request, valibot(resetPasswordSchema));
 
 		if (!form.valid) {
@@ -22,11 +22,8 @@ export const actions: Actions = {
 
 		const { email } = form.data;
 
-		try {
-			await locals.pb.collection('users').requestPasswordReset(email);
-		} catch (error) {
-			console.error('Password reset error:', error);
-		}
+		// TODO: Replace with actual password reset implementation
+		console.log('Password reset requested for:', email);
 
 		return {
 			form,

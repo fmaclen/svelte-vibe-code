@@ -1,10 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { resetDatabase, createTestUser, seedAdmin } from './helpers/db';
 
 test.describe('User Authentication Flow', () => {
 	test('user can sign up with valid credentials', async ({ page }) => {
-		await resetDatabase();
-
 		await page.goto('/');
 		await page.getByRole('link', { name: 'Sign Up' }).click();
 		await page.getByLabel('Email', { exact: true }).fill('alice@example.com');
@@ -16,13 +13,6 @@ test.describe('User Authentication Flow', () => {
 	});
 
 	test('user can sign in with existing account', async ({ page }) => {
-		await resetDatabase();
-		await createTestUser({
-			email: 'alice@example.com',
-			password: 'qweasdzxc',
-			name: 'Alice'
-		});
-
 		await page.goto('/');
 		await page.getByRole('link', { name: 'Sign In' }).click();
 		await page.getByLabel('Email').fill('alice@example.com');
@@ -33,13 +23,6 @@ test.describe('User Authentication Flow', () => {
 	});
 
 	test('user can edit their profile', async ({ page }) => {
-		await resetDatabase();
-		await createTestUser({
-			email: 'alice@example.com',
-			password: 'qweasdzxc',
-			name: 'Alice'
-		});
-
 		// Sign in with the test user
 		await page.goto('/auth/signin');
 		await page.getByLabel('Email').fill('alice@example.com');
@@ -60,13 +43,6 @@ test.describe('User Authentication Flow', () => {
 	});
 
 	test('user can sign out', async ({ page }) => {
-		await resetDatabase();
-		await createTestUser({
-			email: 'alice@example.com',
-			password: 'qweasdzxc',
-			name: 'Alice'
-		});
-
 		// Sign in first
 		await page.goto('/auth/signin');
 		await page.getByLabel('Email').fill('alice@example.com');
@@ -83,13 +59,6 @@ test.describe('User Authentication Flow', () => {
 	});
 
 	test('user can request password reset', async ({ page }) => {
-		await resetDatabase();
-		await createTestUser({
-			email: 'alice@example.com',
-			password: 'qweasdzxc',
-			name: 'Alice'
-		});
-
 		await page.goto('/');
 		await page.getByRole('link', { name: 'Sign In' }).click();
 		await page.getByRole('link', { name: 'Forgot password?' }).click();

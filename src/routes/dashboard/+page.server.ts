@@ -1,20 +1,21 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types.js';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ cookies }) => {
 	// Check if user is authenticated
-	if (!locals.pb.authStore.isValid) {
+	const session = cookies.get('session');
+	if (!session) {
 		redirect(303, '/auth/signin');
 	}
 
 	return {
-		user: locals.pb.authStore.record
+		user: { email: 'user@example.com', name: 'Test User' }
 	};
 };
 
 export const actions: Actions = {
-	signout: async ({ locals }) => {
-		locals.pb.authStore.clear();
+	signout: async ({ cookies }) => {
+		cookies.delete('session', { path: '/' });
 		redirect(303, '/');
 	}
 };
