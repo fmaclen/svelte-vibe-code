@@ -6,7 +6,7 @@
 <div class="container mx-auto max-w-lg py-8">
 	<Card.Root>
 		<Card.Header class="text-center">
-			<Card.Title class="text-2xl">Welcome to Svelte Vibe</Card.Title>
+			<Card.Title class="text-2xl">Welcome</Card.Title>
 			<Card.Description>
 				Your responsible coding starter kit with test-driven development
 			</Card.Description>

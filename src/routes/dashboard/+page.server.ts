@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types.js';
+import type { Actions, PageServerLoad } from './$types.js';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	// Check if user is authenticated
@@ -10,4 +10,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		user: locals.pb.authStore.record
 	};
+};
+
+export const actions: Actions = {
+	signout: async ({ locals }) => {
+		locals.pb.authStore.clear();
+		redirect(303, '/');
+	}
 };

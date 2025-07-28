@@ -37,8 +37,7 @@ test.describe('User Authentication Flow', () => {
 		await createTestUser({
 			email: 'alice@example.com',
 			password: 'qweasdzxc',
-			name: 'Alice',
-			bio: 'Software developer from Seattle'
+			name: 'Alice'
 		});
 
 		// Sign in with the test user

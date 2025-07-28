@@ -22,15 +22,6 @@ export async function resetDatabase() {
 			}
 		}
 
-		// Clear profiles collection
-		try {
-			const profiles = await pb.collection('profiles').getFullList();
-			for (const profile of profiles) {
-				await pb.collection('profiles').delete(profile.id);
-			}
-		} catch (e) {
-			// Collection might not exist yet
-		}
 	} catch (error) {
 		console.error('Failed to reset database:', error);
 		throw error;
@@ -43,7 +34,6 @@ export async function createTestUser(data: {
 	email: string;
 	password: string;
 	name?: string;
-	bio?: string;
 }) {
 	try {
 		// Ensure admin exists first
@@ -59,14 +49,6 @@ export async function createTestUser(data: {
 			name: data.name || 'Test User',
 			emailVisibility: true
 		});
-
-		// Create associated profile if bio is provided
-		if (data.bio) {
-			await pb.collection('profiles').create({
-				user: user.id,
-				bio: data.bio
-			});
-		}
 
 		return user;
 	} catch (error) {
