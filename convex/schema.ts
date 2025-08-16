@@ -5,6 +5,7 @@ export default defineSchema({
 	users: defineTable({
 		email: v.optional(v.string()),
 		name: v.optional(v.string()),
+		passwordHash: v.optional(v.string()),
 		emailVerified: v.optional(v.boolean()),
 		isAnonymous: v.optional(v.boolean()),
 		createdAt: v.optional(v.string())

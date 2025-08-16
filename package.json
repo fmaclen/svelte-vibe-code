@@ -60,6 +60,8 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
-		"@convex-dev/auth": "^0.0.88"
+		"@convex-dev/auth": "^0.0.88",
+		"@types/bcryptjs": "^2.4.6",
+		"bcryptjs": "^3.0.2"
 	}
 }

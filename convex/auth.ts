@@ -2,6 +2,7 @@ import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 import type { Id } from './_generated/dataModel';
 import type { MutationCtx } from './_generated/server';
+import bcrypt from 'bcryptjs';
 
 // Helper function to generate secure session token
 function generateSecureToken(): string {
@@ -66,10 +67,14 @@ export const signUp = mutation({
 			throw new Error('User already exists');
 		}
 
-		// Create user (password hashing would be done client-side with Better Auth)
+		// Hash the password before storing
+		const hashedPassword = await bcrypt.hash(args.password, 10);
+
+		// Create user with hashed password
 		const userId = await ctx.db.insert('users', {
 			email: args.email,
 			name: args.name,
+			passwordHash: hashedPassword,
 			emailVerified: false,
 			createdAt: new Date().toISOString()
 		});
@@ -96,8 +101,15 @@ export const signIn = mutation({
 			throw new Error('Invalid credentials');
 		}
 
-		// Password verification would be done client-side with Better Auth
-		// For now, we'll just create a session
+		// Verify password
+		if (!user.passwordHash) {
+			throw new Error('Invalid credentials');
+		}
+
+		const isValidPassword = await bcrypt.compare(args.password, user.passwordHash);
+		if (!isValidPassword) {
+			throw new Error('Invalid credentials');
+		}
 
 		// Create session
 		const { token } = await createUserSession(ctx, user._id);
