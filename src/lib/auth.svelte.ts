@@ -12,7 +12,10 @@ class AuthStore {
 
 	user: Doc<'users'> | null = $state(null);
 	isLoading = $state(true);
-	isAuthenticated = $derived(!!this.user);
+
+	get isAuthenticated() {
+		return !!this.user;
+	}
 
 	constructor() {
 		// Initialize from localStorage

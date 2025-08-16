@@ -3,11 +3,12 @@ import { ConvexClient } from 'convex/browser';
 import { api } from '../convex/_generated/api';
 
 async function clearAllData() {
-	const convexUrl = process.env.PUBLIC_CONVEX_URL || 'http://127.0.0.1:3210';
+	const convexUrl = process.env.PUBLIC_CONVEX_URL;
+	if (!convexUrl) throw new Error('PUBLIC_CONVEX_URL is not set');
+
 	const client = new ConvexClient(convexUrl);
 	try {
-		const result = await client.mutation(api.dev.clearAllData);
-		console.log('Database cleared:', result);
+		await client.mutation(api.dev.clearAllData, {});
 	} catch (error) {
 		console.error('Failed to clear database:', error);
 		throw error;
@@ -57,7 +58,7 @@ test.describe('Authentication', () => {
 		await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
 	});
 
-	test('can sign in anonymously', async ({ page }) => {
+	test('can sign in anonymously and sign out', async ({ page }) => {
 		await page.goto('/');
 		await expect(page).toHaveURL('/login');
 		await page.getByRole('button', { name: 'Sign in anonymously' }).click();
@@ -65,21 +66,12 @@ test.describe('Authentication', () => {
 		await expect(page.getByRole('heading', { level: 1 })).toContainText('Convex + Svelte Demo');
 		const userDisplay = page.locator('.text-gray-600').filter({ hasText: 'Anonymous User' });
 		await expect(userDisplay).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Sign Out' })).toBeVisible();
-		await expect(page.getByPlaceholder('Type a message...')).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Send' })).toBeVisible();
-	});
-
-	test('can sign out', async ({ page }) => {
-		await page.goto('/');
-		await expect(page).toHaveURL('/login');
-		await page.getByRole('button', { name: 'Sign in anonymously' }).click();
-		await expect(page).toHaveURL('/');
-		await expect(page.getByRole('heading', { level: 1 })).toContainText('Convex + Svelte Demo');
 		const signOutButton = page.getByRole('button', { name: 'Sign Out' });
 		await expect(signOutButton).toBeVisible();
+		await expect(page.getByPlaceholder('Type a message...')).toBeVisible();
+		await expect(page.getByRole('button', { name: 'Send' })).toBeVisible();
 		await signOutButton.click();
-		await page.waitForURL('/login', { timeout: 10000 });
+		await expect(page).toHaveURL('/login');
 		await expect(page.getByRole('heading', { level: 1 })).toContainText(
 			'Sign in to manage your account'
 		);
