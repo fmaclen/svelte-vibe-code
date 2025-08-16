@@ -62,6 +62,8 @@
 	"dependencies": {
 		"@convex-dev/auth": "^0.0.88",
 		"@types/bcryptjs": "^2.4.6",
-		"bcryptjs": "^3.0.2"
+		"@types/crypto-js": "^4.2.2",
+		"bcryptjs": "^3.0.2",
+		"crypto-js": "^4.2.0"
 	}
 }

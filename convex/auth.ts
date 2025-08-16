@@ -53,11 +53,10 @@ export const validateSession = query({
 export const signUp = mutation({
 	args: {
 		email: v.string(),
-		password: v.string(),
+		passwordHash: v.string(),
 		name: v.optional(v.string())
 	},
 	handler: async (ctx, args) => {
-		// Check if user exists with this email
 		const existing = await ctx.db
 			.query('users')
 			.filter((q) => q.eq(q.field('email'), args.email))
@@ -67,14 +66,12 @@ export const signUp = mutation({
 			throw new Error('User already exists');
 		}
 
-		// Hash the password before storing
-		const hashedPassword = await bcrypt.hash(args.password, 10);
+		const serverHash = await bcrypt.hash(args.passwordHash, 10);
 
-		// Create user with hashed password
 		const userId = await ctx.db.insert('users', {
 			email: args.email,
 			name: args.name,
-			passwordHash: hashedPassword,
+			passwordHash: serverHash,
 			emailVerified: false,
 			createdAt: new Date().toISOString()
 		});
@@ -89,7 +86,7 @@ export const signUp = mutation({
 export const signIn = mutation({
 	args: {
 		email: v.string(),
-		password: v.string()
+		passwordHash: v.string()
 	},
 	handler: async (ctx, args) => {
 		const user = await ctx.db
@@ -97,17 +94,12 @@ export const signIn = mutation({
 			.filter((q) => q.eq(q.field('email'), args.email))
 			.first();
 
-		if (!user) {
-			throw new Error('Invalid credentials');
-		}
-
-		// Verify password
-		if (!user.passwordHash) {
-			throw new Error('Invalid credentials');
-		}
-
-		const isValidPassword = await bcrypt.compare(args.password, user.passwordHash);
-		if (!isValidPassword) {
+		const dummyHash = '$2a$10$dummyHashForTimingAttackPrevention123456';
+		const hashToVerify = user?.passwordHash || dummyHash;
+		
+		const isValidPassword = await bcrypt.compare(args.passwordHash, hashToVerify);
+		
+		if (!user || !isValidPassword) {
 			throw new Error('Invalid credentials');
 		}
 

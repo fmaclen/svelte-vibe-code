@@ -71,6 +71,7 @@ test.describe('Authentication', () => {
 		await expect(page.getByPlaceholder('Type a message...')).toBeVisible();
 		await expect(page.getByRole('button', { name: 'Send' })).toBeVisible();
 		await signOutButton.click();
+		await page.waitForURL('/login');
 		await expect(page).toHaveURL('/login');
 		await expect(page.getByRole('heading', { level: 1 })).toContainText(
 			'Sign in to manage your account'
@@ -101,6 +102,7 @@ test.describe('Authentication', () => {
 		await clearAllData();
 
 		// User should be redirected to login since their session no longer exists
+		await page.waitForURL('/login');
 		await expect(page).toHaveURL('/login');
 		await expect(page.getByRole('heading', { level: 1 })).toContainText(
 			'Sign in to manage your account'

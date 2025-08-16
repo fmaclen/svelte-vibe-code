@@ -5,6 +5,7 @@ import type { Doc } from '$convex/_generated/dataModel';
 import { getContext, setContext } from 'svelte';
 import { useConvexClient } from 'convex-svelte';
 import type { ConvexClient } from 'convex/browser';
+import CryptoJS from 'crypto-js';
 
 export const AUTH_TOKEN_KEY = 'svelte_vibe_auth_token';
 
@@ -33,6 +34,22 @@ class AuthStore {
 				this.clearSession();
 			}
 		});
+	}
+
+	private hashPassword(password: string, email: string) {
+		const normalizedEmail = email.toLowerCase().trim();
+		
+		const hash = CryptoJS.PBKDF2(password, normalizedEmail, {
+			keySize: 256 / 32,
+			iterations: 10000
+		});
+		
+		return hash.toString();
+	}
+
+	private validateEmail(email: string) {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return emailRegex.test(email);
 	}
 
 	// Reactive query for current user
@@ -70,10 +87,16 @@ class AuthStore {
 	async signUp(email: string, password: string, name?: string) {
 		if (!this.client) throw new Error('Client not initialized');
 
+		if (!this.validateEmail(email)) {
+			throw new Error('Invalid email address');
+		}
+
 		try {
+			const passwordHash = this.hashPassword(password, email);
+			
 			const result = await this.client.mutation(api.auth.signUp, {
 				email,
-				password,
+				passwordHash,
 				name
 			});
 
@@ -90,10 +113,16 @@ class AuthStore {
 	async signIn(email: string, password: string) {
 		if (!this.client) throw new Error('Client not initialized');
 
+		if (!this.validateEmail(email)) {
+			throw new Error('Invalid email address');
+		}
+
 		try {
+			const passwordHash = this.hashPassword(password, email);
+			
 			const result = await this.client.mutation(api.auth.signIn, {
 				email,
-				password
+				passwordHash
 			});
 
 			if (result.token) {
