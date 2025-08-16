@@ -70,4 +70,3 @@ npm run dev
 Keep `npm run convex` running in one terminal while using the other for tests or dev.
 
 The test and dev environments share the same Convex backend database. This means you can run tests and the dev server simultaneously, and they'll interact with the same data - extremely useful for debugging.
-
