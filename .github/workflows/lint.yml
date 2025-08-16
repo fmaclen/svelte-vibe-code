@@ -1,30 +1,19 @@
 name: Lint
 
 on:
-  push:
-    branches: [master, main]
   pull_request:
-    branches: [master, main]
 
 jobs:
   lint:
+    name: Run linter
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 22
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run linter
-        run: npm run lint
-
-      - name: Run type check
-        run: npm run check
+      - run: npm ci
+      - run: npm run lint

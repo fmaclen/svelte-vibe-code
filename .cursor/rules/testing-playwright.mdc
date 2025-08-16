@@ -1,0 +1,12 @@
+---
+globs: e2e/**/*.ts
+description: Playwright testing rules for this repo
+---
+# Playwright Testing
+
+- **Test dir**: [`e2e/`](mdc:e2e)
+- **Server**: Playwright starts the app with `npm run build && npm run preview` per [`playwright.config.ts`](mdc:playwright.config.ts).
+- **Base URL**: `http://localhost:4173` (see config).
+- **Convex**: Ensure `npm run convex` is running when executing tests locally.
+- **Run tests**: `npm test` (sets the Convex test env var automatically).
+- **Artifacts**: Traces retained on failure; outputs under `test-results/`.

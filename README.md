@@ -1,38 +1,72 @@
-# sv
+# Svelte Vibe Code
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A _somewhat opinionated_ starter template with SvelteKit (client-only), Convex backend, shadcn-svelte UI components, and auth.
+The ideal starting point for vibe coding prototypes, with enough patterns that an LLM can pick up on to build _somewhat_ maintainable code.
 
-## Creating a project
+## Quick Start
 
-If you're seeing this, you've probably already done this step. Congrats!
+Get up and running in 3 commands:
 
 ```sh
-# create a new project in the current directory
-npx sv create
+# 1. Install dependencies
+npm install
 
-# create a new project in my-app
-npx sv create my-app
+# 2. Start Convex database (in terminal 1)
+npm run convex
+
+# 3. Run tests to verify setup (in terminal 2)
+npm test
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once the tests pass, you can run the dev server:
 
 ```sh
+# Run development server
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+## Stack
 
-To create a production version of your app:
+### Frontend
 
-```sh
-npm run build
+- **SvelteKit** - Client-side only application (no SSR, backend handled entirely by Convex)
+- **shadcn-svelte 1.x** - Complete component suite already installed (Tailwind v4 + Bits UI)
+
+### Backend
+
+- **Convex** - Real-time reactive database with TypeScript functions (handles all backend logic)
+- **Custom Auth Implementation** - Demo-ready authentication system (not quite production-ready)
+
+### Development & testing
+
+- **Playwright** - E2E testing framework
+- **TypeScript** - End-to-end type safety
+- **Quality check** - Prettier, ESLint, and svelte-check (`npm run quality`)
+- **Github Actions** - CI/CD pipeline for linting and testing
+
+### LLM support
+
+- **Claude Code** - [`CLAUDE.md`](CLAUDE.md)
+- **Cursor** - [`.cursor/rules`](.cursor/rules)
+
+## Project Structure
+
+```
+├── convex/          # Backend functions and schema
+│   ├── auth.ts      # Server-side auth logic
+│   ├── messages.ts  # Real-time messaging functions
+│   └── schema.ts    # Database schema
+├── src/
+│   ├── lib/
+│   │   ├── components/ui/  # shadcn-svelte components
+│   │   └── auth.svelte.ts   # Client-side auth state management
+│   └── routes/      # SvelteKit pages
+├── e2e/             # Playwright E2E tests
+└── package.json     # Dependencies and scripts
 ```
 
-You can preview the production build with `npm run preview`.
+## Recommended usage
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Keep `npm run convex` running in one terminal while using the other for tests or dev.
+
+The test and dev environments share the same Convex backend database. This means you can run tests and the dev server simultaneously, and they'll interact with the same data - extremely useful for debugging.

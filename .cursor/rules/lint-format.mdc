@@ -1,0 +1,11 @@
+---
+globs: **/*.*
+description: Formatting, linting, and checks
+---
+# Linting & Formatting
+
+- **Format**: Prettier 3 with `prettier-plugin-svelte` and `prettier-plugin-tailwindcss`.
+- **Lint**: ESLint 9 with `eslint-plugin-svelte` and TypeScript configs (see [`eslint.config.js`](mdc:eslint.config.js)).
+- **Typecheck**: `svelte-check` with project TS config.
+- **One command**: `npm run quality` (format + lint + svelte-check).
+- **Before committing**: Ensure no ESLint errors, no type errors, and code is formatted.
