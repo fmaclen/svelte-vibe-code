@@ -3,19 +3,24 @@ import { v } from 'convex/values';
 
 export default defineSchema({
 	users: defineTable({
-		email: v.string(),
-		username: v.optional(v.string()),
+		email: v.optional(v.string()),
 		name: v.optional(v.string()),
-		avatar: v.optional(v.string()),
-		verified: v.optional(v.boolean()),
-		created: v.optional(v.string()),
-		updated: v.optional(v.string())
-	}).index('by_email', ['email']),
+		emailVerified: v.optional(v.boolean()),
+		isAnonymous: v.optional(v.boolean()),
+		createdAt: v.optional(v.string())
+	}),
 
-	// Add other tables as needed based on your app's requirements
+	sessions: defineTable({
+		userId: v.id('users'),
+		token: v.string(),
+		expiresAt: v.number(),
+		createdAt: v.number()
+	}).index('by_token', ['token']),
+
 	messages: defineTable({
+		userId: v.optional(v.id('users')),
 		author: v.string(),
 		body: v.string(),
 		created: v.optional(v.string())
-	})
+	}).index('by_user', ['userId'])
 });

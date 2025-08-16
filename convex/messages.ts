@@ -3,12 +3,32 @@ import { v } from 'convex/values';
 
 export const send = mutation({
 	args: {
-		author: v.string(),
-		body: v.string()
+		body: v.string(),
+		token: v.optional(v.string())
 	},
 	handler: async (ctx, args) => {
+		let userId = undefined;
+		let author = 'Anonymous';
+
+		// If token is provided, get the user
+		if (args.token) {
+			const session = await ctx.db
+				.query('sessions')
+				.withIndex('by_token', (q) => q.eq('token', args.token!))
+				.first();
+
+			if (session && session.expiresAt > Date.now()) {
+				userId = session.userId;
+				const user = await ctx.db.get(userId);
+				if (user) {
+					author = user.name || user.email || 'User';
+				}
+			}
+		}
+
 		const messageId = await ctx.db.insert('messages', {
-			author: args.author,
+			userId,
+			author,
 			body: args.body,
 			created: new Date().toISOString()
 		});
