@@ -22,8 +22,35 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium webkit
 
-      - name: Run Playwright tests
-        run: npm test
+      - name: Start Convex and Run Tests
+        run: |
+          # Start Convex in the background
+          CONVEX_AGENT_MODE=anonymous npx convex dev > convex.log 2>&1 &
+          CONVEX_PID=$!
+
+          # Wait for Convex to be ready
+          echo "Waiting for Convex to be ready..."
+          for i in {1..60}; do
+            if grep -q "Convex functions ready!" convex.log 2>/dev/null; then
+              echo "Convex is ready!"
+              break
+            fi
+            if [ $i -eq 60 ]; then
+              echo "Timeout waiting for Convex"
+              cat convex.log
+              exit 1
+            fi
+            sleep 1
+          done
+
+          # Run the tests with Convex still running
+          npm test
+          TEST_EXIT_CODE=$?
+
+          # Clean up
+          kill $CONVEX_PID || true
+
+          exit $TEST_EXIT_CODE
         env:
           CI: true
 
