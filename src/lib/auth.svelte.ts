@@ -70,12 +70,12 @@ class AuthStore {
 	}
 
 	private clearSession() {
-		if (browser) {
-			localStorage.removeItem(AUTH_TOKEN_KEY);
-		}
 		this.token = null;
 		this.user = null;
 		this.isLoading = false;
+		if (browser) {
+			localStorage.removeItem(AUTH_TOKEN_KEY);
+		}
 	}
 
 	async signUp(email: string, password: string, name?: string) {
@@ -137,18 +137,22 @@ class AuthStore {
 	}
 
 	async signOut() {
-		// Clear session first to prevent any further queries
 		const token = this.token;
-		this.clearSession();
 
-		// Then try to clear the session on the server
+		// Only clear session after server confirms
 		if (this.client && token) {
 			try {
 				await this.client.mutation(api.auth.signOut, { token });
+				// Server confirmed - now clear local session
+				this.clearSession();
 			} catch (error) {
 				console.error('Sign out server error:', error);
-				// Continue anyway - local session is already cleared
+				// Even on error, clear local session as fallback
+				this.clearSession();
 			}
+		} else {
+			// No client or token, just clear local session
+			this.clearSession();
 		}
 	}
 }

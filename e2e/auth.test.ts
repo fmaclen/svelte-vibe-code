@@ -91,10 +91,10 @@ test.describe('Authentication', () => {
 		await signOutButton.click();
 
 		// Wait for redirect back to login
-		await expect(page).toHaveURL('/login');
 		await expect(page.getByRole('heading', { level: 1 })).toContainText(
 			'Sign in to manage your account'
 		);
+		await expect(page).toHaveURL('/login');
 	});
 
 	test('persists authentication across page refreshes', async ({ page }) => {

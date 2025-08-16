@@ -8,6 +8,9 @@ export default defineConfig({
 	},
 	testDir: 'e2e',
 	use: {
-		baseURL: 'http://localhost:4173'
-	}
+		baseURL: 'http://localhost:4173',
+		trace: 'retain-on-failure'
+	},
+	retries: process.env.CI ? 2 : 0,
+	outputDir: 'test-results'
 });
