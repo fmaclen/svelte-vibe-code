@@ -25,3 +25,7 @@ vite.config.ts.timestamp-*
 
 # PocketBase
 pocketbase/
+
+# Convex generated files
+convex/_generated/
+*/_generated/

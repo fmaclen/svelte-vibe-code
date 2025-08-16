@@ -3,15 +3,6 @@
 	import { useAuth } from '$lib/auth.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import {
-		Card,
-		CardContent,
-		CardDescription,
-		CardFooter,
-		CardHeader,
-		CardTitle
-	} from '$lib/components/ui/card';
 	import { Alert, AlertDescription } from '$lib/components/ui/alert';
 
 	let mode: 'signin' | 'signup' = $state('signin');
@@ -42,8 +33,8 @@
 			}
 			// Small delay to ensure auth state is updated
 			setTimeout(() => goto('/'), 100);
-		} catch (err: any) {
-			error = err.message || 'Authentication failed';
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Authentication failed';
 			isLoading = false;
 		}
 	}
@@ -56,8 +47,8 @@
 			await auth.signInAnonymously();
 			// Small delay to ensure auth state is updated
 			setTimeout(() => goto('/'), 100);
-		} catch (err: any) {
-			error = err.message || 'Anonymous sign in failed';
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Anonymous sign in failed';
 			isLoading = false;
 		}
 	}

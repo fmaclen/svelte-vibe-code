@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { useQuery, useConvexClient } from '$lib/client.svelte';
-	import { api } from '../../convex/_generated/api.js';
-	import { useAuth } from '$lib/auth.svelte';
-	import { goto } from '$app/navigation';
+	import { api } from '$convex/_generated/api.js';
+	import { useAuth, AUTH_TOKEN_KEY } from '$lib/auth.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import AuthGuard from '$lib/components/AuthGuard.svelte';
-
-	let newMessage = $state('');
+	import AuthGuard from './auth-guard.svelte';
+	import type { ConvexClient } from 'convex/browser';
 
 	const auth = useAuth();
 
 	// Get client with error handling
-	let client: any = $state();
-	let messages: any = $state();
+	let client: ConvexClient | undefined = $state();
+	let messages: ReturnType<typeof useQuery> | undefined = $state();
+	let newMessage = $state('');
 
 	try {
 		client = useConvexClient();
@@ -25,7 +24,7 @@
 		if (!newMessage.trim() || !client) return;
 
 		try {
-			const token = localStorage.getItem('auth_token');
+			const token = localStorage.getItem(AUTH_TOKEN_KEY);
 			await client.mutation(api.messages.send, {
 				body: newMessage,
 				token: token || undefined
@@ -38,7 +37,6 @@
 
 	async function handleSignOut() {
 		await auth.signOut();
-		// AuthGuard will handle the redirect
 	}
 </script>
 
@@ -83,7 +81,7 @@
 				<p class="text-red-500">Error: {messages.error.toString()}</p>
 			{:else if messages.data}
 				<div class="space-y-2">
-					{#each messages.data as message}
+					{#each messages.data as message (message._id)}
 						<div class="rounded border p-3">
 							<strong>{message.author}:</strong>
 							{message.body}

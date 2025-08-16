@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { useAuth } from '$lib/auth.svelte';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		redirectTo?: string;
-		children?: any;
+		children?: Snippet;
 	}
 
 	let { redirectTo = '/login', children }: Props = $props();

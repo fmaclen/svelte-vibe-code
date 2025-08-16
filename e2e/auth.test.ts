@@ -82,7 +82,7 @@ test.describe('Authentication', () => {
 		// Wait for redirect to home and ensure auth is fully loaded
 		await expect(page).toHaveURL('/');
 		await expect(page.getByRole('heading', { level: 1 })).toContainText('Convex + Svelte Demo');
-		
+
 		// Ensure the sign out button is visible and ready
 		const signOutButton = page.getByRole('button', { name: 'Sign Out' });
 		await expect(signOutButton).toBeVisible();
@@ -186,7 +186,9 @@ test.describe('Chat Functionality', () => {
 
 		// Check that author is shown (Anonymous User: is in the message)
 		const messageContainer = page.locator('.rounded.border').filter({ hasText: testMessage });
-		await expect(messageContainer.locator('strong').filter({ hasText: 'Anonymous User:' })).toBeVisible();
+		await expect(
+			messageContainer.locator('strong').filter({ hasText: 'Anonymous User:' })
+		).toBeVisible();
 
 		// Check that timestamp is shown
 		const dateToday = new Date().toLocaleDateString();

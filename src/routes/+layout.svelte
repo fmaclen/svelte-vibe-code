@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import { Toaster } from 'svelte-sonner';
 	import { setupConvex } from 'convex-svelte';
 	import { PUBLIC_CONVEX_URL } from '$env/static/public';
 
@@ -16,5 +15,3 @@
 </script>
 
 {@render children()}
-
-<Toaster />

@@ -1,25 +1,23 @@
-import { useConvexClient, useQuery } from '$lib/client.svelte';
-import { api } from '../../convex/_generated/api';
+import { browser } from '$app/environment';
+import { useConvexClient } from '$lib/client.svelte';
+import type { ConvexClient } from 'convex/browser';
+import { api } from '$convex/_generated/api';
+import type { Doc } from '$convex/_generated/dataModel';
 
-interface User {
-	_id: string;
-	email: string;
-	name?: string;
-	isAnonymous?: boolean;
-}
+export const AUTH_TOKEN_KEY = 'svelte_vibe_auth_token';
 
 class AuthStore {
-	private client = $state<any>(null);
-	private token = $state<string | null>(null);
+	private client: ConvexClient | null = $state(null);
+	private token: string | null = $state(null);
 
-	user = $state<User | null>(null);
+	user: Doc<'users'> | null = $state(null);
 	isLoading = $state(true);
 	isAuthenticated = $derived(!!this.user);
 
 	constructor() {
 		// Initialize from localStorage
-		if (typeof window !== 'undefined') {
-			const storedToken = localStorage.getItem('auth_token');
+		if (browser) {
+			const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
 			if (storedToken) {
 				this.token = storedToken;
 			}
@@ -54,8 +52,7 @@ class AuthStore {
 
 		try {
 			this.isLoading = true;
-			const user = await this.client.query(api.auth.currentUser, { token: this.token });
-			this.user = user;
+			this.user = await this.client.query(api.auth.currentUser, { token: this.token });
 		} catch (error) {
 			console.error('Failed to fetch user:', error);
 			this.clearSession();
@@ -64,14 +61,18 @@ class AuthStore {
 		}
 	}
 
-	private setSession(token: string, user: User) {
+	private setSession(token: string, user: Doc<'users'>) {
 		this.token = token;
 		this.user = user;
-		localStorage.setItem('auth_token', token);
+		if (browser) {
+			localStorage.setItem(AUTH_TOKEN_KEY, token);
+		}
 	}
 
 	private clearSession() {
-		localStorage.removeItem('auth_token');
+		if (browser) {
+			localStorage.removeItem(AUTH_TOKEN_KEY);
+		}
 		this.token = null;
 		this.user = null;
 		this.isLoading = false;
@@ -88,15 +89,15 @@ class AuthStore {
 			});
 
 			if (result.token) {
-				this.setSession(
-					result.token,
-					await this.client.query(api.auth.currentUser, { token: result.token })
-				);
+				const user = await this.client.query(api.auth.currentUser, { token: result.token });
+				if (user) {
+					this.setSession(result.token, user);
+				}
 			}
 
 			return result;
-		} catch (error: any) {
-			throw new Error(error.message || 'Sign up failed');
+		} catch (error) {
+			throw new Error(error instanceof Error ? error.message : 'Sign up failed');
 		}
 	}
 
@@ -114,8 +115,8 @@ class AuthStore {
 			}
 
 			return result;
-		} catch (error: any) {
-			throw new Error(error.message || 'Sign in failed');
+		} catch (error) {
+			throw new Error(error instanceof Error ? error.message : 'Sign in failed');
 		}
 	}
 
@@ -130,8 +131,8 @@ class AuthStore {
 			}
 
 			return result;
-		} catch (error: any) {
-			throw new Error(error.message || 'Anonymous sign in failed');
+		} catch (error) {
+			throw new Error(error instanceof Error ? error.message : 'Anonymous sign in failed');
 		}
 	}
 
