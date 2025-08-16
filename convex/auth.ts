@@ -1,23 +1,37 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+import type { Id } from './_generated/dataModel';
+import type { MutationCtx } from './_generated/server';
 
-// Simple session-based auth for Better Auth integration
-export const createSession = mutation({
-	args: {
-		userId: v.id('users'),
-		token: v.string(),
-		expiresAt: v.number()
-	},
-	handler: async (ctx, args) => {
-		const sessionId = await ctx.db.insert('sessions', {
-			userId: args.userId,
-			token: args.token,
-			expiresAt: args.expiresAt,
-			createdAt: Date.now()
-		});
-		return { sessionId, token: args.token };
-	}
-});
+// Helper function to generate secure session token
+function generateSecureToken(): string {
+	// Generate random bytes and convert to base64url string
+	const randomBytes = new Uint8Array(32);
+	crypto.getRandomValues(randomBytes);
+	return btoa(String.fromCharCode(...randomBytes))
+		.replace(/\+/g, '-')
+		.replace(/\//g, '_')
+		.replace(/=/g, '');
+}
+
+// Helper function to create a session
+async function createUserSession(
+	ctx: MutationCtx,
+	userId: Id<'users'>,
+	expirationHours: number = 24 * 7 // Default 7 days
+) {
+	const token = generateSecureToken();
+	const expiresAt = Date.now() + expirationHours * 60 * 60 * 1000;
+
+	await ctx.db.insert('sessions', {
+		userId,
+		token,
+		expiresAt,
+		createdAt: Date.now()
+	});
+
+	return { token, expiresAt };
+}
 
 export const validateSession = query({
 	args: { token: v.string() },
@@ -60,16 +74,8 @@ export const signUp = mutation({
 			createdAt: new Date().toISOString()
 		});
 
-		// Generate session token
-		const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-		const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
-
-		await ctx.db.insert('sessions', {
-			userId,
-			token,
-			expiresAt,
-			createdAt: Date.now()
-		});
+		// Create session
+		const { token } = await createUserSession(ctx, userId);
 
 		return { userId, token };
 	}
@@ -93,16 +99,8 @@ export const signIn = mutation({
 		// Password verification would be done client-side with Better Auth
 		// For now, we'll just create a session
 
-		// Generate session token
-		const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-		const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
-
-		await ctx.db.insert('sessions', {
-			userId: user._id,
-			token,
-			expiresAt,
-			createdAt: Date.now()
-		});
+		// Create session
+		const { token } = await createUserSession(ctx, user._id);
 
 		return { userId: user._id, token, user };
 	}
@@ -118,16 +116,8 @@ export const signInAnonymously = mutation({
 			createdAt: new Date().toISOString()
 		});
 
-		// Generate session token
-		const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-		const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 1 day for anonymous
-
-		await ctx.db.insert('sessions', {
-			userId,
-			token,
-			expiresAt,
-			createdAt: Date.now()
-		});
+		// Create session (24 hours for anonymous users)
+		const { token } = await createUserSession(ctx, userId, 24);
 
 		const user = await ctx.db.get(userId);
 		return { userId, token, user };
