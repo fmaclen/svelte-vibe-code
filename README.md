@@ -1,70 +1,67 @@
 # Svelte Vibe Code
 
-A modern Svelte project with Convex backend integration.
+A starter template with SvelteKit (client-only), Convex backend, shadcn-svelte UI components, and auth.
+The ideal starting point for vibe coding prototypes, with enough patterns that an LLM can pick up on to build _somewhat_ maintainable code.
 
-## Setup
+## Quick Start
 
-Install dependencies:
+Get up and running in 3 commands:
 
 ```sh
+# 1. Install dependencies
 npm install
+
+# 2. Start Convex database (in terminal 1)
+npm run convex
+
+# 3. Run tests to verify setup (in terminal 2)
+npm test
 ```
 
-## Convex Database Setup
-
-This project uses Convex as the backend database. To get started:
-
-1. **Login to Convex:**
-
-   ```sh
-   npx convex login
-   ```
-
-2. **Initialize development:**
-
-   ```sh
-   npx convex dev
-   ```
-
-   This creates a deployment and starts the dev server.
-
-3. **Set environment variables:**
-   Copy `.env.example` to `.env.local` and update `PUBLIC_CONVEX_URL` with your deployment URL.
-
-## Development
-
-Start the development server:
+Once the tests pass, you can run the dev server:
 
 ```sh
+# Run development server
 npm run dev
-
-# or open in browser
-npm run dev -- --open
 ```
 
-## Convex Commands
+## Stack
 
-- `npx convex dev` - Start Convex development server
-- `npx convex deploy` - Deploy functions to production
-- `npx convex dashboard` - Open the Convex dashboard
+### Frontend
 
-## Building
+- **SvelteKit** - Client-side only application (no SSR, backend handled entirely by Convex)
+- **shadcn-svelte 1.x** - Complete component suite already installed (Tailwind v4 + Bits UI)
 
-Create a production build:
+### Backend
 
-```sh
-npm run build
+- **Convex** - Real-time reactive database with TypeScript functions (handles all backend logic)
+- **Custom Auth Implementation** - Demo-ready authentication system (not quite production-ready)
+
+### Development & testing
+
+- **Playwright** - E2E testing framework
+- **TypeScript** - End-to-end type safety
+- **Quality check** - Prettier, ESLint, and svelte-check (`npm run quality`)
+- **Github Actions** - CI/CD pipeline for linting and testing
+
+## Project Structure
+
+```
+├── convex/          # Backend functions and schema
+│   ├── auth.ts      # Server-side auth logic
+│   ├── messages.ts  # Real-time messaging functions
+│   └── schema.ts    # Database schema
+├── src/
+│   ├── lib/
+│   │   ├── components/ui/  # shadcn-svelte components
+│   │   └── auth.svelte.ts   # Client-side auth state management
+│   └── routes/      # SvelteKit pages
+├── e2e/             # Playwright E2E tests
+└── package.json     # Dependencies and scripts
 ```
 
-Preview the production build:
+## Recommended usage
 
-```sh
-npm run preview
-```
+Keep `npm run convex` running in one terminal while using the other for tests or dev.
 
-## Database Schema
-
-- **users**: User authentication and profiles
-- **messages**: Real-time messaging system
-
-See `CONVEX_SETUP.md` for detailed setup instructions.
+The test and dev environments share the same Convex backend database. This means you can run tests and the dev server simultaneously, and they'll interact with the same data - extremely useful for debugging.

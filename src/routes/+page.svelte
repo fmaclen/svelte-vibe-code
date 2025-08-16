@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useQuery, useConvexClient } from '$lib/client.svelte';
+	import { useQuery, useConvexClient } from 'convex-svelte';
 	import { api } from '$convex/_generated/api.js';
 	import { useAuth, AUTH_TOKEN_KEY } from '$lib/auth.svelte';
 	import { Button } from '$lib/components/ui/button';

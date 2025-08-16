@@ -1,9 +1,8 @@
 import { browser } from '$app/environment';
-import { useQuery } from '$lib/client.svelte';
+import { useQuery, useConvexClient } from 'convex-svelte';
 import { api } from '$convex/_generated/api';
 import type { Doc } from '$convex/_generated/dataModel';
 import { getContext, setContext } from 'svelte';
-import { useConvexClient } from 'convex-svelte';
 import type { ConvexClient } from 'convex/browser';
 import CryptoJS from 'crypto-js';
 
