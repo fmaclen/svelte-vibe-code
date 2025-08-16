@@ -1,0 +1,12 @@
+---
+globs: convex/**/*.ts
+description: Convex backend conventions and Svelte integration
+---
+# Convex Conventions
+
+- **Schema**: Define tables and fields in [`convex/schema.ts`](mdc:convex/schema.ts).
+- **Functions**: Organize domain logic in files like [`convex/auth.ts`](mdc:convex/auth.ts) and [`convex/messages.ts`](mdc:convex/messages.ts).
+- **Generated code**: Use the generated client/api in [`convex/_generated/`](mdc:convex/_generated). Import via the `$convex` alias when used from Svelte.
+- **Dev server**: Keep `npm run convex` running during development and tests.
+- **Tests**: `npm test` sets a Convex environment var for dev/test; tests and dev can share the same database.
+- **Frontend usage**: Call Convex queries/mutations from Svelte components or stores, not from server-only loaders.

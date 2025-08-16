@@ -1,0 +1,29 @@
+---
+alwaysApply: true
+description: High-level project structure, key entry points, and how to run dev, tests, and Convex
+---
+# Svelte Vibe Code – Project Structure
+
+- **Frontend**: SvelteKit (client-only)
+- **Backend**: Convex (TypeScript functions)
+- **UI**: shadcn-svelte components in `src/lib/components/ui`
+- **Tests**: Playwright in `e2e/`
+
+## Key files and dirs
+- App shell: [`src/routes/+layout.svelte`](mdc:src/routes/+layout.svelte), [`src/routes/+page.svelte`](mdc:src/routes/+page.svelte)
+- Auth: [`src/lib/auth.svelte.ts`](mdc:src/lib/auth.svelte.ts), [`src/routes/auth-guard.svelte`](mdc:src/routes/auth-guard.svelte), [`src/routes/login/+page.svelte`](mdc:src/routes/login/+page.svelte)
+- Convex backend: [`convex/auth.ts`](mdc:convex/auth.ts), [`convex/messages.ts`](mdc:convex/messages.ts), [`convex/schema.ts`](mdc:convex/schema.ts), [`convex/_generated/`](mdc:convex/_generated)
+- UI library: [`src/lib/components/ui/`](mdc:src/lib/components/ui)
+- Config: [`package.json`](mdc:package.json), [`svelte.config.js`](mdc:svelte.config.js), [`vite.config.ts`](mdc:vite.config.ts), [`tsconfig.json`](mdc:tsconfig.json), [`eslint.config.js`](mdc:eslint.config.js), [`playwright.config.ts`](mdc:playwright.config.ts), [`README.md`](mdc:README.md)
+
+## Scripts
+- Dev server: `npm run dev`
+- Convex dev: `npm run convex`
+- Build/preview: `npm run build` / `npm run preview`
+- Tests (E2E): `npm test`
+- Quality: `npm run quality` (format + lint + typecheck)
+
+## Conventions
+- Use the `$convex` alias defined in [`svelte.config.js`](mdc:svelte.config.js) for Convex imports.
+- Frontend is client-only; use Convex for all server logic and data.
+- Keep Convex running in a separate terminal during development and testing.

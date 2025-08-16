@@ -1,0 +1,14 @@
+---
+globs: src/**/*.svelte,src/**/*.svelte.ts,src/**/*.ts
+description: Svelte + TypeScript conventions for this project
+---
+# Svelte + TypeScript Style
+
+- **TypeScript**: Project is `strict`; avoid `any` and unsafe casts. Prefer explicit function signatures for exported APIs.
+- **Naming**: Use descriptive names (avoid 1–2 char identifiers). Functions are verbs; variables are nouns.
+- **Imports**: Prefer `$lib` and `$convex` aliases over deep relative paths.
+- **UI components**: Use primitives from [`src/lib/components/ui`](mdc:src/lib/components/ui). Avoid editing library components unless fixing a bug.
+- **Formatting**: Use Prettier (Svelte + Tailwind plugins). Run `npm run format`.
+- **Linting**: Use `npm run lint` or `npm run quality` before committing.
+- **Separation of concerns**: Keep data fetching and mutations in Convex; keep Svelte components focused on presentation and state orchestration.
+- **Files**: For shared logic in the app, use `.svelte.ts` modules colocated with components or under `$lib`.
