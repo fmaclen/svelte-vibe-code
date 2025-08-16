@@ -1,81 +1,67 @@
 import { browser } from '$app/environment';
-import { useConvexClient } from '$lib/client.svelte';
-import type { ConvexClient } from 'convex/browser';
+import { useQuery } from '$lib/client.svelte';
 import { api } from '$convex/_generated/api';
 import type { Doc } from '$convex/_generated/dataModel';
+import { getContext, setContext } from 'svelte';
+import { useConvexClient } from 'convex-svelte';
+import type { ConvexClient } from 'convex/browser';
 
 export const AUTH_TOKEN_KEY = 'svelte_vibe_auth_token';
 
 class AuthStore {
-	private client: ConvexClient | null = $state(null);
-	private token: string | null = $state(null);
+	private _token: string | null = $state(null);
+	private client: ConvexClient | null = null;
 
-	user: Doc<'users'> | null = $state(null);
-	isLoading = $state(true);
+	constructor() {
+		// Initialize from localStorage
+		if (browser) {
+			this._token = localStorage.getItem(AUTH_TOKEN_KEY);
+		}
+
+		// Get Convex client
+		try {
+			this.client = useConvexClient();
+		} catch (error) {
+			console.error('Failed to get Convex client:', error);
+		}
+
+		// Watch for external session deletion
+		$effect.pre(() => {
+			// If query returns null but we still have a token, session was deleted externally
+			if (this.userQuery?.data === null && this._token) {
+				console.log('[Auth] Session deleted externally, logging out');
+				this.clearSession();
+			}
+		});
+	}
+
+	// Reactive query for current user
+	private userQuery = $derived(
+		this._token ? useQuery(api.auth.currentUser, { token: this._token }) : null
+	);
+
+	get isLoading() {
+		if (!this._token) return false;
+		return this.userQuery?.isLoading ?? true;
+	}
+
+	get user(): Doc<'users'> | null {
+		return this.userQuery?.data ?? null;
+	}
 
 	get isAuthenticated() {
 		return !!this.user;
 	}
 
-	constructor() {
-		// Initialize from localStorage
-		if (browser) {
-			const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
-			if (storedToken) {
-				this.token = storedToken;
-			}
-		}
-
-		// Set up reactive effects
-		$effect(() => {
-			try {
-				this.client = useConvexClient();
-			} catch (error) {
-				console.error('Failed to initialize Convex client:', error);
-			}
-		});
-
-		// Watch for token changes and fetch user
-		$effect(() => {
-			if (this.client && this.token) {
-				this.fetchUser();
-			} else {
-				this.user = null;
-				this.isLoading = false;
-			}
-		});
-	}
-
-	private async fetchUser() {
-		if (!this.client || !this.token) {
-			this.user = null;
-			this.isLoading = false;
-			return;
-		}
-
-		try {
-			this.isLoading = true;
-			this.user = await this.client.query(api.auth.currentUser, { token: this.token });
-		} catch (error) {
-			console.error('Failed to fetch user:', error);
-			this.clearSession();
-		} finally {
-			this.isLoading = false;
-		}
-	}
-
-	private setSession(token: string, user: Doc<'users'>) {
-		this.token = token;
-		this.user = user;
+	private setSession(token: string) {
+		this._token = token;
 		if (browser) {
 			localStorage.setItem(AUTH_TOKEN_KEY, token);
 		}
 	}
 
 	private clearSession() {
-		this.token = null;
-		this.user = null;
-		this.isLoading = false;
+		this._token = null;
 		if (browser) {
 			localStorage.removeItem(AUTH_TOKEN_KEY);
 		}
@@ -92,10 +78,7 @@ class AuthStore {
 			});
 
 			if (result.token) {
-				const user = await this.client.query(api.auth.currentUser, { token: result.token });
-				if (user) {
-					this.setSession(result.token, user);
-				}
+				this.setSession(result.token);
 			}
 
 			return result;
@@ -113,8 +96,8 @@ class AuthStore {
 				password
 			});
 
-			if (result.token && result.user) {
-				this.setSession(result.token, result.user);
+			if (result.token) {
+				this.setSession(result.token);
 			}
 
 			return result;
@@ -129,8 +112,8 @@ class AuthStore {
 		try {
 			const result = await this.client.mutation(api.auth.signInAnonymously, {});
 
-			if (result.token && result.user) {
-				this.setSession(result.token, result.user);
+			if (result.token) {
+				this.setSession(result.token);
 			}
 
 			return result;
@@ -140,31 +123,34 @@ class AuthStore {
 	}
 
 	async signOut() {
-		const token = this.token;
+		const token = this._token;
 
-		// Only clear session after server confirms
+		// Clear local session first
+		this.clearSession();
+
+		// Then clear server session
 		if (this.client && token) {
 			try {
 				await this.client.mutation(api.auth.signOut, { token });
-				// Server confirmed - now clear local session
-				this.clearSession();
 			} catch (error) {
 				console.error('Sign out server error:', error);
-				// Even on error, clear local session as fallback
-				this.clearSession();
 			}
-		} else {
-			// No client or token, just clear local session
-			this.clearSession();
 		}
 	}
 }
 
-let authInstance: AuthStore | null = null;
+const CONTEXT_KEY = 'auth-store';
+
+export function setAuthContext() {
+	const store = new AuthStore();
+	setContext(CONTEXT_KEY, store);
+	return store;
+}
 
 export function useAuth(): AuthStore {
-	if (!authInstance) {
-		authInstance = new AuthStore();
+	const store = getContext<AuthStore>(CONTEXT_KEY);
+	if (!store) {
+		throw new Error('Auth context not found. Make sure to call setAuthContext() in +layout.svelte');
 	}
-	return authInstance;
+	return store;
 }

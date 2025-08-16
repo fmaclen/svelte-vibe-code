@@ -2,14 +2,13 @@
 	import '../app.css';
 	import { setupConvex } from 'convex-svelte';
 	import { PUBLIC_CONVEX_URL } from '$env/static/public';
+	import { setAuthContext } from '$lib/auth.svelte';
 
-	// Initialize Convex client in component context with error handling
-	try {
-		console.log('Initializing Convex with URL:', PUBLIC_CONVEX_URL);
-		setupConvex(PUBLIC_CONVEX_URL || 'http://127.0.0.1:3210');
-	} catch (error) {
-		console.error('Failed to setup Convex:', error);
-	}
+	// Initialize Convex client in component context
+	setupConvex(PUBLIC_CONVEX_URL);
+
+	// Set up auth context
+	setAuthContext();
 
 	let { children } = $props();
 </script>

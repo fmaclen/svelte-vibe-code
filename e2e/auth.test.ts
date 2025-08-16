@@ -89,6 +89,23 @@ test.describe('Authentication', () => {
 		const userDisplay = page.locator('.text-gray-600').filter({ hasText: 'Anonymous User' });
 		await expect(userDisplay).toBeVisible();
 	});
+
+	test('logs out user when session is deleted externally', async ({ page }) => {
+		await page.goto('/');
+		await expect(page).toHaveURL('/login');
+		await page.getByRole('button', { name: 'Sign in anonymously' }).click();
+		await expect(page).toHaveURL('/');
+		await expect(page.getByRole('heading', { level: 1 })).toContainText('Convex + Svelte Demo');
+
+		// Clear all data from the database (simulating external deletion)
+		await clearAllData();
+
+		// User should be redirected to login since their session no longer exists
+		await expect(page).toHaveURL('/login');
+		await expect(page.getByRole('heading', { level: 1 })).toContainText(
+			'Sign in to manage your account'
+		);
+	});
 });
 
 test.describe('Chat Functionality', () => {
