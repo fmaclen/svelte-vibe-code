@@ -1,6 +1,6 @@
 # Svelte Vibe Code
 
-A starter template with SvelteKit (client-only), Convex backend, shadcn-svelte UI components, and auth.
+A _somewhat opinionated_ starter template with SvelteKit (client-only), Convex backend, shadcn-svelte UI components, and auth.
 The ideal starting point for vibe coding prototypes, with enough patterns that an LLM can pick up on to build _somewhat_ maintainable code.
 
 ## Quick Start
@@ -44,6 +44,11 @@ npm run dev
 - **Quality check** - Prettier, ESLint, and svelte-check (`npm run quality`)
 - **Github Actions** - CI/CD pipeline for linting and testing
 
+### LLM support
+
+- **Claude Code** - [`CLAUDE.md`](CLAUDE.md)
+- **Cursor** - [`.cursor/rules`](.cursor/rules)
+
 ## Project Structure
 
 ```
@@ -65,3 +70,4 @@ npm run dev
 Keep `npm run convex` running in one terminal while using the other for tests or dev.
 
 The test and dev environments share the same Convex backend database. This means you can run tests and the dev server simultaneously, and they'll interact with the same data - extremely useful for debugging.
+
