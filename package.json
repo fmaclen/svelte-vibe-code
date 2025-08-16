@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --host",
-		"convex": "npx convex dev",
+		"convex": "CONVEX_AGENT_MODE=anonymous npx convex dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
@@ -13,7 +13,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"test": "playwright test",
+		"test": "npx convex env set IS_DEV_OR_TEST true 2>/dev/null || true && playwright test",
 		"quality": "npm run format && npm run lint && npm run check"
 	},
 	"devDependencies": {

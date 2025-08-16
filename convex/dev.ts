@@ -1,13 +1,20 @@
 import { mutation } from './_generated/server';
 
 // Development helper functions
-// Only use these in development/testing!
+// WARNING: Only use these in development/testing!
+// These functions can destroy all data - never expose them in production!
 
 export const clearAllData = mutation({
 	handler: async (ctx) => {
-		if (process.env.NODE_ENV === 'production') {
-			throw new Error('Cannot clear data in production!');
+		// Check if we're in dev/test mode - this uses Convex's environment variables
+		// Set IS_DEV_OR_TEST in your Convex dashboard or via `npx convex env set IS_DEV_OR_TEST true`
+		// In production, don't set this variable or set it to undefined
+		if (process.env.IS_DEV_OR_TEST !== 'true') {
+			throw new Error('Cannot clear data in production! Set IS_DEV_OR_TEST=true to enable.');
 		}
+
+		// WARNING: This will delete ALL data in the database!
+		// Only use in development/test environments
 
 		// Clear all messages
 		const messages = await ctx.db.query('messages').collect();

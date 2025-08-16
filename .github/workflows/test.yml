@@ -43,7 +43,7 @@ jobs:
             sleep 1
           done
 
-          # Run the tests with Convex still running
+          # Run the tests with Convex still running (npm test will set IS_DEV_OR_TEST)
           npm test
           TEST_EXIT_CODE=$?
 
