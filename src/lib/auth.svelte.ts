@@ -38,12 +38,12 @@ class AuthStore {
 
 	private hashPassword(password: string, email: string) {
 		const normalizedEmail = email.toLowerCase().trim();
-		
+
 		const hash = CryptoJS.PBKDF2(password, normalizedEmail, {
 			keySize: 256 / 32,
 			iterations: 10000
 		});
-		
+
 		return hash.toString();
 	}
 
@@ -93,7 +93,7 @@ class AuthStore {
 
 		try {
 			const passwordHash = this.hashPassword(password, email);
-			
+
 			const result = await this.client.mutation(api.auth.signUp, {
 				email,
 				passwordHash,
@@ -119,7 +119,7 @@ class AuthStore {
 
 		try {
 			const passwordHash = this.hashPassword(password, email);
-			
+
 			const result = await this.client.mutation(api.auth.signIn, {
 				email,
 				passwordHash

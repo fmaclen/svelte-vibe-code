@@ -96,9 +96,9 @@ export const signIn = mutation({
 
 		const dummyHash = '$2a$10$dummyHashForTimingAttackPrevention123456';
 		const hashToVerify = user?.passwordHash || dummyHash;
-		
+
 		const isValidPassword = await bcrypt.compare(args.passwordHash, hashToVerify);
-		
+
 		if (!user || !isValidPassword) {
 			throw new Error('Invalid credentials');
 		}
